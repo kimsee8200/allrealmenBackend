@@ -160,4 +160,10 @@ jobs:
           sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml rm -f app || true
           sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml up -d app
           echo 'Deployment commands executed.'
-        " 
+        "
+
+    - name: Check application logs
+      run: |
+        echo "Waiting for application to start..."
+        sleep 30  # Give the application some time to start
+        ssh ec2 "docker logs \$(docker ps -q --filter ancestor=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }})" 
