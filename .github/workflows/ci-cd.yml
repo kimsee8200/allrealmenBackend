@@ -88,7 +88,10 @@ jobs:
 
     - name: Create application configuration file
       run: |
-        ssh ec2 "echo '${{ secrets.APPLICATION_YML }}' > ~/config/application.yml"
+        mkdir -p ./src/main/resources
+        echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_YML }}" > application.yml
+        scp application.yml ec2:~/config/application.yml
 
     - name: Copy docker-compose file
       run: scp docker-compose.yml ec2:~/
