@@ -83,11 +83,11 @@ jobs:
       run: |
         sed -i "s|kimsee/allrealmen:latest|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}|g" docker-compose.yml
 
-    - name: Create application.yml file
-      run: |
-           touch ./src/main/resources/application.yml
-           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-           cat ./src/main/resources/application.yml
+#    - name: Create application.yml file
+#      run: |
+#           touch ./src/main/resources/application.yml
+#           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+#           cat ./src/main/resources/application.yml
 
     - name: Copy docker-compose file
       run: scp docker-compose.yml ec2:~/
