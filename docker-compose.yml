@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  app:
+    image: kimsee/allrealmen:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://root:rootpassword@mongodb:27017/allrealmen?authSource=admin
+      - SPRING_DATA_MONGODB_DATABASE=allrealmen
+    volumes:
+      - ./config:/app/config
+
+    depends_on:
+      - mongodb
+    networks:
+      - allReal_network
+
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -13,7 +28,7 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - mongodb_network
+      - allReal_network
 
   mongo-express:
     image: mongo-express:latest
@@ -28,14 +43,14 @@ services:
     depends_on:
       - mongodb
     networks:
-      - mongodb_network
+      - allReal_network
 
 volumes:
   mongodb_data:
     name: mongodb_data
 
 networks:
-  mongodb_network:
-    name: mongodb_network
+  allReal_network:
+    name: allReal_network
 
 

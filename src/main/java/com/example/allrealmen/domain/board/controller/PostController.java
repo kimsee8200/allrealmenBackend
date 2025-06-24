@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,12 @@ public class PostController {
     
     @GetMapping
     public ResponseEntity<ApiResponse<Page<PostResponse>>> getPosts(Pageable pageable) {
-        return ResponseEntity.ok(ApiResponse.success(postService.getPosts(pageable)));
+        PageRequest pageRequest = PageRequest.of(
+            pageable.getPageNumber(),
+            pageable.getPageSize() == 20 ? 10 : pageable.getPageSize(),  // 기본값 20을 10으로 변경
+            pageable.getSort()
+        );
+        return ResponseEntity.ok(ApiResponse.success(postService.getPosts(pageRequest)));
     }
     
     @GetMapping("/{id}")

@@ -30,6 +30,8 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable String id) {
         return ResponseEntity.ok(ApiResponse.success(categoryService.getCategory(id)));
     }
+
+
     
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
