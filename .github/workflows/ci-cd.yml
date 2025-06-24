@@ -13,7 +13,7 @@ env:
   EC2_USER: ${{ secrets.EC2_USER }}
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     
     steps:
@@ -31,7 +31,6 @@ jobs:
     
     - name: Build with Gradle
       run: ./gradlew build
-
 
   build-and-push-docker:
     needs: build-and-test
