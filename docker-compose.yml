@@ -8,7 +8,7 @@ services:
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://root:rootpassword@mongodb:27017/allrealmen?authSource=admin
       - SPRING_DATA_MONGODB_DATABASE=allrealmen
-      - SPRING_SECURITY_JWT_SECRET=${JWT_SECRET:wfjkcjiasjlfijiaocjdjfiosjfiofjsicjsiajfifjsofjcoasufhhghj;kvkahbfsahfbjbfjdf}
+      - SPRING_SECURITY_JWT_SECRET=${JWT_SECRET:wfjkcjiasjlfijiaocjdjfiosjfiofjsicjsiajfifjsofjcoasuf}
       - SPRING_SECURITY_JWT_EXPIRATION=86400000
       - SPRING_PROFILES_ACTIVE=prod
       - SERVER_PORT=8080
