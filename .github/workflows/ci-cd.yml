@@ -83,17 +83,10 @@ jobs:
       run: |
         sed -i "s|kimsee/allrealmen:latest|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}|g" docker-compose.yml
 
-    - name: Create config directory on EC2
-      run: ssh ec2 "mkdir -p ~/config"
-
-    - name: Create application configuration file
+    - name: Create .env file
       run: |
-        mkdir -p ./src/main/resources
-        cat << 'EOF' > ./src/main/resources/application.yml
-        ${{ secrets.APPLICATION_YML }}
-        EOF
-        cp ./src/main/resources/application.yml application.yml
-        scp application.yml ec2:~/config/application.yml
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" > .env
+        scp .env ec2:~/
 
     - name: Copy docker-compose file
       run: scp docker-compose.yml ec2:~/
@@ -151,19 +144,10 @@ jobs:
             echo 'docker-compose is already installed at /usr/local/bin/docker-compose:'; \
             /usr/local/bin/docker-compose --version; \
           fi
-        "
 
-        ssh ec2 "
-          echo 'Executing docker-compose commands...'
           sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml pull
-          sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml stop app || true
-          sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml rm -f app || true
-          sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml up -d app
-          echo 'Deployment commands executed.'
+          sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml down || true
+          sudo /usr/local/bin/docker-compose -f ~/docker-compose.yml up -d
         "
 
-    - name: Check application logs
-      run: |
-        echo "Waiting for application to start..."
-        sleep 30  # Give the application some time to start
-        ssh ec2 "docker logs \$(docker ps -q --filter ancestor=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }})" 
+   
