@@ -83,14 +83,44 @@ jobs:
       run: |
         sed -i "s|kimsee/allrealmen:latest|${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_IMAGE_TAG }}|g" docker-compose.yml
 
-#    - name: Create application.yml file
-#      run: |
-#           touch ./src/main/resources/application.yml
-#           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
-#           cat ./src/main/resources/application.yml
+    - name: Create .env file
+      run: |
+        cat > .env << EOL
+        # MongoDB
+        SPRING_DATA_MONGODB_HOST=mongodb
+        SPRING_DATA_MONGODB_PORT=27017
+        SPRING_DATA_MONGODB_DATABASE=allrealmen
 
-    - name: Copy docker-compose file
-      run: scp docker-compose.yml ec2:~/
+        # OAuth2
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}
+
+        # JWT
+        JWT_SECRET=${{ secrets.JWT_SECRET }}
+        JWT_EXPIRATION=86400000
+
+        # Naver Cloud SMS
+        NAVER_CLOUD_ACCESS_KEY=${{ secrets.NAVER_CLOUD_ACCESS_KEY }}
+        NAVER_CLOUD_SECRET_KEY=${{ secrets.NAVER_CLOUD_SECRET_KEY }}
+        NAVER_CLOUD_SERVICE_ID=${{ secrets.NAVER_CLOUD_SERVICE_ID }}
+        NAVER_CLOUD_SENDER_PHONE=${{ secrets.NAVER_CLOUD_SENDER_PHONE }}
+
+        # Kakao API
+        KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }}
+        KAKAO_TEMPLATE_ID=${{ secrets.KAKAO_TEMPLATE_ID }}
+
+        # Server
+        SERVER_PORT=8080
+        EOL
+
+    - name: Copy files to EC2
+      run: |
+        scp docker-compose.yml ec2:~/
+        scp .env ec2:~/
 
     - name: Deploy to EC2
       run: |
