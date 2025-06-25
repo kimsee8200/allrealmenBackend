@@ -115,8 +115,10 @@ jobs:
 
     - name: Copy files to EC2
       run: |
+        ssh ec2 "mkdir -p ~/src/main/resources"
         scp docker-compose.yml ec2:~/
         scp .env ec2:~/
+        scp src/main/resources/application.yml ec2:~/src/main/resources/
 
     - name: Deploy to EC2
       run: |
