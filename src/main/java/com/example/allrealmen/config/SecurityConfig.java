@@ -87,7 +87,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
             "http://jeenie2027.cafe24app.com", 
             "https://jeenie2027.cafe24app.com",
-            "http://localhost:8001",
+            "http://localhost:3000",
+            "http://localhost:5173",
             "http://jeenie.kr"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
