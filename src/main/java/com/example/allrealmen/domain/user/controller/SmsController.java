@@ -1,12 +1,18 @@
 package com.example.allrealmen.domain.user.controller;
 
 import com.example.allrealmen.common.dto.ApiResponse;
+import com.example.allrealmen.domain.user.dto.SmsRequest;
 import com.example.allrealmen.domain.user.dto.VerifySmsRequest;
+import com.example.allrealmen.domain.user.repository.SmsVerificationRepository;
+import com.example.allrealmen.domain.user.service.CoolSmsService;
 import com.example.allrealmen.domain.user.service.SmsService;
+import com.example.allrealmen.domain.user.service.VerificationCodeStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -15,14 +21,19 @@ import org.springframework.web.bind.annotation.*;
 public class SmsController {
 
     private final SmsService smsService;
+    private final CoolSmsService coolSmsService;
+    private final VerificationCodeStorage verificationCodeStorage;
 
     @GetMapping("/sms-confirm")
-    public ResponseEntity<ApiResponse<Void>> sendVerificationSms(@RequestParam String phoneNumber) {
+    public ResponseEntity<ApiResponse<String>> sendVerificationSms(@RequestBody SmsRequest smsRequest) {
         try {
-            log.info("Sending verification SMS");
-            smsService.sendVerificationSms(phoneNumber);
-            return ResponseEntity.ok(new ApiResponse<>("success", null, null));
+            String phoneNumber = smsRequest.getPhoneNumber();
+            log.info("Sending verification SMS to {}", phoneNumber);
+            String verificationCode = coolSmsService.sendVerificationSms(phoneNumber);
+            verificationCodeStorage.saveVerificationCode(phoneNumber, verificationCode);
+            return ResponseEntity.ok(new ApiResponse<>("success", verificationCode, null));
         } catch (Exception e) {
+            log.error("Failed to send SMS", e);
             return ResponseEntity.badRequest().body(new ApiResponse<>("error", null, e.getMessage()));
         }
     }
