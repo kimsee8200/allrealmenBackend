@@ -37,7 +37,7 @@ out/
 .vscode/
 
 # Spring Boot specific
-src/main/resources/application.yml
-src/main/resources/application.properties
+#src/main/resources/application.yml
+#src/main/resources/application.properties
 src/test/resources/application.yml
 src/test/resources/application.properties
