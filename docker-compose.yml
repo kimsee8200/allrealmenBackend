@@ -5,6 +5,8 @@ services:
     image: kimsee/allrealmen:latest
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
       # MongoDB 설정
       - SPRING_DATA_MONGODB_URI=mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/allrealmen?authSource=admin
