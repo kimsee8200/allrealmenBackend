@@ -38,7 +38,7 @@ public class SmsController {
         }
     }
 
-    @PostMapping("/sms-verify")
+    @PostMapping("/verify-code")
     public ResponseEntity<ApiResponse<Boolean>> verifySms(@RequestBody VerifySmsRequest verifySmsRequest) {
         boolean isVerified = smsService.verifySms(verifySmsRequest.getPhoneNumber(), verifySmsRequest.getCode());
         if (isVerified) {
