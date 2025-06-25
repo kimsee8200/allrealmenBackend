@@ -22,6 +22,12 @@ public class NaverOAuth2UserInfo extends OAuth2UserInfo {
         return (String) response.get("name");
     }
 
+    @SuppressWarnings("unchecked")
+    public String getMobile() {
+        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        return (String) response.get("mobile");
+    }
+
 //    @Override
 //    @SuppressWarnings("unchecked")
 //    public String getEmail() {

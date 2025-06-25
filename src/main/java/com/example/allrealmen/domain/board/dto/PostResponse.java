@@ -44,7 +44,7 @@ public class PostResponse {
         public static ImageResponse from(com.example.allrealmen.domain.board.entity.PostImage image) {
             ImageResponse response = new ImageResponse();
             response.setId(image.getId());
-            response.setUrl(image.getUrl());
+            response.setUrl(image.getImageUrl());
             return response;
         }
     }

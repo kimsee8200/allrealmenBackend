@@ -48,8 +48,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member createNewMember(OAuth2UserInfo userInfo) {
         Member member = new Member();
         member.setId(userInfo.getName()); // 임시 ID 생성
-        //member.setPhoneNumber(userInfo.getEmail());
-        member.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // 임시 비밀번호
+        
+        // 네이버 사용자인 경우 전화번호 저장
+        if (userInfo instanceof NaverOAuth2UserInfo) {
+            NaverOAuth2UserInfo naverUserInfo = (NaverOAuth2UserInfo) userInfo;
+            member.setPhoneNumber(naverUserInfo.getMobile());
+        }
+        
+        //member.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // 임시 비밀번호
         return memberRepository.save(member);
     }
 } 

@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -44,18 +45,19 @@ public class PostController {
     
     @PostMapping
     public ResponseEntity<ApiResponse<PostResponse>> createPost(
-            @Valid @ModelAttribute CreatePostRequest request) {
+            @RequestPart(value = "request") @Valid CreatePostRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return ResponseEntity.ok(ApiResponse.success(
-            postService.createPost(request)));
+            postService.createPost(request, images)));
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<PostResponse>> updatePost(
             @PathVariable String id,
-            @Valid @ModelAttribute CreatePostRequest request
-            ) {
+            @RequestPart(value = "request") @Valid CreatePostRequest request,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images) {
         return ResponseEntity.ok(ApiResponse.success(
-            postService.updatePost(id, request)));
+            postService.updatePost(id, request, images)));
     }
     
     @DeleteMapping("/{id}")

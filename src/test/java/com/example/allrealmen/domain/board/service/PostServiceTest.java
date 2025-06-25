@@ -1,5 +1,6 @@
 package com.example.allrealmen.domain.board.service;
 
+import com.example.allrealmen.common.service.FileService;
 import com.example.allrealmen.common.util.SecurityUtil;
 import com.example.allrealmen.domain.board.dto.CreatePostRequest;
 import com.example.allrealmen.domain.board.dto.PostResponse;
@@ -17,13 +18,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,9 +40,13 @@ class PostServiceTest {
     @Mock
     private PostRepository postRepository;
 
+    @Mock
+    private FileService fileService;
+
     private Post post;
     private CreatePostRequest createPostRequest;
     private String currentUserId;
+    private List<MultipartFile> mockImages;
 
     @BeforeEach
     void setUp() {
@@ -52,6 +61,21 @@ class PostServiceTest {
         createPostRequest = new CreatePostRequest();
         createPostRequest.setTitle("New Title");
         createPostRequest.setContent("New Content");
+
+        mockImages = Arrays.asList(
+            new MockMultipartFile(
+                "image1",
+                "test1.jpg",
+                "image/jpeg",
+                "test image content 1".getBytes()
+            ),
+            new MockMultipartFile(
+                "image2",
+                "test2.jpg",
+                "image/jpeg",
+                "test image content 2".getBytes()
+            )
+        );
     }
 
     @Test
@@ -98,20 +122,42 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("게시글 작성 성공")
-    void createPostSuccess() {
+    @DisplayName("게시글 작성 성공 - 이미지 없음")
+    void createPostSuccessWithoutImage() {
         // given
         try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
             securityUtil.when(SecurityUtil::getCurrentUserId).thenReturn(currentUserId);
             when(postRepository.save(any())).thenReturn(post);
 
             // when
-            PostResponse result = postService.createPost(createPostRequest);
+            PostResponse result = postService.createPost(createPostRequest, null);
 
             // then
             assertThat(result.getTitle()).isEqualTo(post.getTitle());
             assertThat(result.getContent()).isEqualTo(post.getContent());
             verify(postRepository).save(any(Post.class));
+            verify(fileService, never()).saveFile(any(), any());
+        }
+    }
+
+    @Test
+    @DisplayName("게시글 작성 성공 - 이미지 포함")
+    void createPostSuccessWithImage() {
+        // given
+        try (MockedStatic<SecurityUtil> securityUtil = mockStatic(SecurityUtil.class)) {
+            securityUtil.when(SecurityUtil::getCurrentUserId).thenReturn(currentUserId);
+            when(postRepository.save(any())).thenReturn(post);
+            when(fileService.saveFile(any(MultipartFile.class), eq("post")))
+                .thenReturn("test-image-url-1", "test-image-url-2");
+
+            // when
+            PostResponse result = postService.createPost(createPostRequest, mockImages);
+
+            // then
+            assertThat(result.getTitle()).isEqualTo(post.getTitle());
+            assertThat(result.getContent()).isEqualTo(post.getContent());
+            verify(postRepository).save(any(Post.class));
+            verify(fileService, times(2)).saveFile(any(MultipartFile.class), eq("post"));
         }
     }
 
@@ -125,7 +171,7 @@ class PostServiceTest {
             when(postRepository.save(any())).thenReturn(post);
 
             // when
-            PostResponse result = postService.updatePost(post.getId(), createPostRequest);
+            PostResponse result = postService.updatePost(post.getId(), createPostRequest, null);
 
             // then
             assertThat(result.getTitle()).isEqualTo(post.getTitle());
@@ -143,7 +189,7 @@ class PostServiceTest {
             when(postRepository.findById(any())).thenReturn(Optional.of(post));
 
             // when & then
-            assertThatThrownBy(() -> postService.updatePost(post.getId(), createPostRequest))
+            assertThatThrownBy(() -> postService.updatePost(post.getId(), createPostRequest, null))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("게시글을 수정할 권한이 없습니다.");
         }

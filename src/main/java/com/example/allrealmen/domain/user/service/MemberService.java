@@ -1,5 +1,6 @@
 package com.example.allrealmen.domain.user.service;
 
+import com.example.allrealmen.domain.user.dto.MemberUpdateDto;
 import com.example.allrealmen.domain.user.dto.SignUpRequest;
 import com.example.allrealmen.domain.user.entity.Member;
 import com.example.allrealmen.domain.user.repository.MemberRepository;
@@ -69,5 +70,21 @@ public class MemberService implements UserDetailsService {
         return memberRepository.findByPhoneNumber(phoneNumber)
                 .map(Member::getId)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 전화번호로 가입된 사용자를 찾을 수 없습니다."));
+    }
+
+    @Transactional
+    public void updateMember(String memberId, MemberUpdateDto updateDto) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+
+        // 이름 업데이트
+        if (updateDto.getName() != null && !updateDto.getName().isEmpty()) {
+            member.setId(updateDto.getName());
+        }
+
+        // 전화번호 업데이트
+        if (updateDto.getPhoneNumber() != null && !updateDto.getPhoneNumber().isEmpty()) {
+            member.setPhoneNumber(updateDto.getPhoneNumber());
+        }
     }
 } 
