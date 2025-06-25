@@ -5,6 +5,7 @@ import com.example.allrealmen.domain.board.dto.CreatePostRequest;
 import com.example.allrealmen.domain.board.dto.CreateReplyRequest;
 import com.example.allrealmen.domain.board.dto.PostResponse;
 import com.example.allrealmen.domain.board.dto.ReplyResponse;
+import com.example.allrealmen.domain.board.dto.PostListResponse;
 import com.example.allrealmen.domain.board.service.PostService;
 import com.example.allrealmen.domain.board.service.ReplyService;
 import com.example.allrealmen.domain.user.security.CustomUserDetails;
@@ -29,7 +30,7 @@ public class PostController {
     private final ReplyService replyService;
     
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<PostResponse>>> getPosts(Pageable pageable) {
+    public ResponseEntity<ApiResponse<Page<PostListResponse>>> getPosts(Pageable pageable) {
         PageRequest pageRequest = PageRequest.of(
             pageable.getPageNumber(),
             pageable.getPageSize() == 20 ? 10 : pageable.getPageSize(),  // 기본값 20을 10으로 변경

@@ -127,7 +127,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/api/categories/initialize").hasRole("ADMIN")
 
                 // 게시판 관련
-                .requestMatchers("/api/posts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
 
                 // 사전신청 관련
                 .requestMatchers(HttpMethod.POST, "/api/application").permitAll()

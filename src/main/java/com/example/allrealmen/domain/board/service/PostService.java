@@ -3,6 +3,7 @@ package com.example.allrealmen.domain.board.service;
 import com.example.allrealmen.common.service.FileService;
 import com.example.allrealmen.common.util.SecurityUtil;
 import com.example.allrealmen.domain.board.dto.CreatePostRequest;
+import com.example.allrealmen.domain.board.dto.PostListResponse;
 import com.example.allrealmen.domain.board.dto.PostResponse;
 import com.example.allrealmen.domain.board.entity.Post;
 import com.example.allrealmen.domain.board.entity.PostImage;
@@ -25,9 +26,9 @@ public class PostService {
     private final PostRepository postRepository;
     private final FileService fileService;
 
-    public Page<PostResponse> getPosts(Pageable pageable) {
+    public Page<PostListResponse> getPosts(Pageable pageable) {
         return postRepository.findAllByOrderByCreateAtDesc(pageable)
-                .map(PostResponse::from);
+                .map(PostListResponse::from);
     }
     
     public PostResponse getPost(String id) {

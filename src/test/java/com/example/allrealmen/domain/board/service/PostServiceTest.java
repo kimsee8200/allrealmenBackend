@@ -3,6 +3,7 @@ package com.example.allrealmen.domain.board.service;
 import com.example.allrealmen.common.service.FileService;
 import com.example.allrealmen.common.util.SecurityUtil;
 import com.example.allrealmen.domain.board.dto.CreatePostRequest;
+import com.example.allrealmen.domain.board.dto.PostListResponse;
 import com.example.allrealmen.domain.board.dto.PostResponse;
 import com.example.allrealmen.domain.board.entity.Post;
 import com.example.allrealmen.domain.board.repository.PostRepository;
@@ -87,7 +88,7 @@ class PostServiceTest {
         when(postRepository.findAllByOrderByCreateAtDesc(any())).thenReturn(postPage);
 
         // when
-        Page<PostResponse> result = postService.getPosts(pageable);
+        Page<PostListResponse> result = postService.getPosts(pageable);
 
         // then
         assertThat(result.getContent()).hasSize(1);
