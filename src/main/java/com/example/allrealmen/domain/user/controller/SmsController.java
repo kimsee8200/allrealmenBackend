@@ -24,7 +24,7 @@ public class SmsController {
     private final CoolSmsService coolSmsService;
     private final VerificationCodeStorage verificationCodeStorage;
 
-    @GetMapping("/sms-confirm")
+    @PostMapping("/verify-phone")
     public ResponseEntity<ApiResponse<String>> sendVerificationSms(@RequestBody SmsRequest smsRequest) {
         try {
             String phoneNumber = smsRequest.getPhoneNumber();
