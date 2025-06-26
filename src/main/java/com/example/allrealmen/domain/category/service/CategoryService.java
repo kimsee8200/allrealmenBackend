@@ -4,6 +4,7 @@ import com.example.allrealmen.common.service.FileService;
 import com.example.allrealmen.common.util.SecurityUtil;
 import com.example.allrealmen.domain.category.dto.CategoryResponse;
 import com.example.allrealmen.domain.category.dto.UpdateCategoryRequest;
+import com.example.allrealmen.domain.category.dto.CategoryListResponse;
 import com.example.allrealmen.domain.category.entity.Category;
 import com.example.allrealmen.domain.category.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +25,16 @@ public class CategoryService {
     private final FileService fileService;
     private static final String CATEGORY_FILE_DIR = "categories";
     
-    public List<CategoryResponse> getAllCategories() {
+    public List<CategoryListResponse> getAllCategories() {
         return categoryRepository.findAll().stream()
-            .map(CategoryResponse::from)
-            .toList();
+                .map(CategoryListResponse::from)
+                .collect(Collectors.toList());
+    }
+    
+    public List<CategoryResponse> getCategoriesDetail() {
+        return categoryRepository.findAll().stream()
+                .map(CategoryResponse::from)
+                .collect(Collectors.toList());
     }
     
     public CategoryResponse getCategory(String id) {
