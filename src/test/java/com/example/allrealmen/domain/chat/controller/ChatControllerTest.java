@@ -194,7 +194,7 @@ class ChatControllerTest {
 
         // when
         ResponseEntity<String> response = restTemplate.exchange(
-                baseUrl + "/consultation?applicationId=app123&customerId=" + customer.getId(),
+                baseUrl + "/consultation?customerId=" + customer.getId(),
                 HttpMethod.POST,
                 new HttpEntity<>(headers),
                 String.class
@@ -269,7 +269,6 @@ class ChatControllerTest {
         // 고객이 채팅방 입장
         ChatMessageRequest customerJoinMessage = new ChatMessageRequest();
         customerJoinMessage.setRoomId(chatRoom.getId());
-        customerJoinMessage.setSenderId(customer.getId());
         customerJoinMessage.setType(ChatMessage.MessageType.SYSTEM);
         customerJoinMessage.setContent(customer.getId() + "님이 입장하셨습니다.");
         customerSession.send(CHAT_JOIN_ENDPOINT, customerJoinMessage);
@@ -277,7 +276,6 @@ class ChatControllerTest {
         // 고객이 메시지 전송
         ChatMessageRequest customerChatMessage = new ChatMessageRequest();
         customerChatMessage.setRoomId(chatRoom.getId());
-        customerChatMessage.setSenderId(customer.getId());
         customerChatMessage.setContent("안녕하세요, 문의드립니다.");
         customerChatMessage.setType(ChatMessage.MessageType.CHAT);
         customerSession.send(CHAT_SEND_ENDPOINT, customerChatMessage);
@@ -288,7 +286,6 @@ class ChatControllerTest {
         // 관리자가 응답 메시지 전송
         ChatMessageRequest adminChatMessage = new ChatMessageRequest();
         adminChatMessage.setRoomId(chatRoom.getId());
-        adminChatMessage.setSenderId(admin.getId());
         adminChatMessage.setContent("네, 무엇을 도와드릴까요?");
         adminChatMessage.setType(ChatMessage.MessageType.CHAT);
         adminSession.send(CHAT_SEND_ENDPOINT, adminChatMessage);

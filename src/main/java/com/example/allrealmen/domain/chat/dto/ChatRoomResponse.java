@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Builder
 public class ChatRoomResponse {
     private String id;
-    private String applicationId;
     private String customerId;
     private String adminId;
     private ChatRoom.ChatStatus status;
@@ -22,7 +21,6 @@ public class ChatRoomResponse {
     public static ChatRoomResponse from(ChatRoom room, int unreadCount) {
         return ChatRoomResponse.builder()
                 .id(room.getId())
-                .applicationId(room.getApplicationId())
                 .customerId(room.getCustomerId())
                 .adminId(room.getAdminId())
                 .status(room.getStatus())

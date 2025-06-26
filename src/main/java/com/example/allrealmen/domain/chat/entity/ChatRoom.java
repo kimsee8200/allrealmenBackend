@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 public class ChatRoom {
     @Id
     private String id;
-    
-    private String applicationId;  // 상담 신청 ID
     private String customerId;     // 고객 ID
     private String adminId;        // 상담 관리자 ID
     private ChatStatus status;     // 채팅방 상태

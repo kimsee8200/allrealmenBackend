@@ -86,7 +86,6 @@ class ChatServiceTest {
         // given
         ChatMessageRequest request = new ChatMessageRequest();
         request.setRoomId(chatRoom.getId());
-        request.setSenderId(customer.getId());
         request.setContent("안녕하세요");
         request.setType(ChatMessage.MessageType.CHAT);
 
@@ -95,7 +94,7 @@ class ChatServiceTest {
         when(chatMessageRepository.save(any(ChatMessage.class))).thenReturn(chatMessage);
 
         // when
-        ChatMessageResponse response = chatService.sendMessage(request);
+        ChatMessageResponse response = chatService.sendMessage(request, customer.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -118,7 +117,7 @@ class ChatServiceTest {
         when(chatMessageRepository.save(any(ChatMessage.class))).thenReturn(chatMessage);
 
         // when
-        ChatRoomResponse response = chatService.createConsultationRoom(customer.getId(), applicationId);
+        ChatRoomResponse response = chatService.createConsultationRoom(customer.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -137,7 +136,7 @@ class ChatServiceTest {
         chatRoom.setStatus(ChatRoom.ChatStatus.WAITING);
         ChatMessageRequest request = new ChatMessageRequest();
         request.setRoomId(chatRoom.getId());
-        request.setSenderId(admin.getId());
+
 
         when(chatRoomRepository.findById(chatRoom.getId())).thenReturn(Optional.of(chatRoom));
         when(memberRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
@@ -145,7 +144,7 @@ class ChatServiceTest {
         when(chatMessageRepository.save(any(ChatMessage.class))).thenReturn(chatMessage);
 
         // when
-        ChatMessageResponse response = chatService.joinRoom(request);
+        ChatMessageResponse response = chatService.joinRoom(request, admin.getId());
 
         // then
         assertThat(response).isNotNull();
@@ -226,13 +225,12 @@ class ChatServiceTest {
         // given
         ChatMessageRequest request = new ChatMessageRequest();
         request.setRoomId("nonexistent");
-        request.setSenderId(customer.getId());
         request.setContent("테스트 메시지");
 
         when(chatRoomRepository.findById("nonexistent")).thenReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> chatService.sendMessage(request))
+        assertThatThrownBy(() -> chatService.sendMessage(request, customer.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 채팅방입니다.");
     }
@@ -245,13 +243,13 @@ class ChatServiceTest {
         chatRoom.setAdminId("other_admin");
         ChatMessageRequest request = new ChatMessageRequest();
         request.setRoomId(chatRoom.getId());
-        request.setSenderId(admin.getId());
+
 
         when(chatRoomRepository.findById(chatRoom.getId())).thenReturn(Optional.of(chatRoom));
         when(memberRepository.findById(admin.getId())).thenReturn(Optional.of(admin));
 
         // when & then
-        assertThatThrownBy(() -> chatService.joinRoom(request))
+        assertThatThrownBy(() -> chatService.joinRoom(request,admin.getId()))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("이미 다른 상담사가 배정된 방입니다.");
     }

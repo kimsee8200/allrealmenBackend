@@ -1,6 +1,7 @@
 package com.example.allrealmen.domain.chat.controller;
 
 import com.example.allrealmen.common.dto.ApiResponse;
+import com.example.allrealmen.common.util.SecurityUtil;
 import com.example.allrealmen.domain.chat.dto.ChatMessageRequest;
 import com.example.allrealmen.domain.chat.dto.ChatMessageResponse;
 import com.example.allrealmen.domain.chat.dto.ChatRoomResponse;
@@ -13,6 +14,8 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +30,9 @@ public class ChatController {
 
     @MessageMapping("/chat.send")
     public void sendMessage(@Payload ChatMessageRequest chatMessage) {
-        ChatMessageResponse response = chatService.sendMessage(chatMessage);
+        String senderId = SecurityUtil.getCurrentUserId();
+        
+        ChatMessageResponse response = chatService.sendMessage(chatMessage, senderId);
         
         // 웹소켓으로 메시지 전송
         messagingTemplate.convertAndSend(
@@ -44,12 +49,15 @@ public class ChatController {
     @MessageMapping("/chat.join")
     public void joinRoom(@Payload ChatMessageRequest chatMessage, 
                         SimpMessageHeaderAccessor headerAccessor) {
+
+        String senderId = SecurityUtil.getCurrentUserId();
+        
         // 웹소켓 세션에 사용자 정보 저장
         headerAccessor.getSessionAttributes().put("room_id", chatMessage.getRoomId());
-        headerAccessor.getSessionAttributes().put("user_id", chatMessage.getSenderId());
+        headerAccessor.getSessionAttributes().put("user_id", senderId);
         
         // 입장 메시지 전송
-        ChatMessageResponse response = chatService.joinRoom(chatMessage);
+        ChatMessageResponse response = chatService.joinRoom(chatMessage, senderId);
         messagingTemplate.convertAndSend(
             "/topic/room." + chatMessage.getRoomId(), 
             response
@@ -64,7 +72,7 @@ public class ChatController {
         return ResponseEntity.ok(new ApiResponse<>("200 OK", rooms, null));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    
     @GetMapping("/rooms/{roomId}/messages")
     public ResponseEntity<ApiResponse<List<ChatMessageResponse>>> getChatMessages(
             @PathVariable String roomId) {
@@ -81,9 +89,8 @@ public class ChatController {
 
     @PostMapping("/consultation")
     public ResponseEntity<ApiResponse<ChatRoomResponse>> createConsultationRoom(
-            @RequestParam String applicationId,
             @RequestParam String customerId) {
-        ChatRoomResponse room = chatService.createConsultationRoom(customerId, applicationId);
+        ChatRoomResponse room = chatService.createConsultationRoom(customerId);
         return ResponseEntity.ok(new ApiResponse<>("200 OK", room, "상담방이 생성되었습니다."));
     }
 } 

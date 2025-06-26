@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,16 +27,16 @@ public class ChatService {
     private final KakaoNotificationService kakaoNotificationService;
 
     @Transactional
-    public ChatMessageResponse sendMessage(ChatMessageRequest request) {
+    public ChatMessageResponse sendMessage(ChatMessageRequest request, String senderId) {
         ChatRoom room = chatRoomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
 
-        Member sender = memberRepository.findById(request.getSenderId())
+        Member sender = memberRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         ChatMessage message = new ChatMessage();
         message.setRoomId(request.getRoomId());
-        message.setSenderId(request.getSenderId());
+        message.setSenderId(senderId);
         message.setContent(request.getContent());
         message.setType(request.getType());
         message.setPlatform(ChatMessage.Platform.WEB);
@@ -49,7 +50,7 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatRoomResponse createConsultationRoom(String customerId, String applicationId) {
+    public ChatRoomResponse createConsultationRoom(String customerId) {
         Member customer = memberRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
@@ -57,9 +58,15 @@ public class ChatService {
             throw new IllegalArgumentException("관리자는 상담을 신청할 수 없습니다.");
         }
 
+        // 이미 존재하는 활성 채팅방 확인
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByCustomerIdAndStatusNot(
+            customerId, ChatRoom.ChatStatus.CLOSED);
+        if (existingRoom.isPresent()) {
+            throw new IllegalStateException("이미 진행 중인 상담이 있습니다.");
+        }
+
         ChatRoom room = new ChatRoom();
         room.setCustomerId(customerId);
-        room.setApplicationId(applicationId);
         room.setStatus(ChatRoom.ChatStatus.WAITING);
         room.setCreatedAt(LocalDateTime.now());
         room.setUpdatedAt(LocalDateTime.now());
@@ -81,11 +88,11 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatMessageResponse joinRoom(ChatMessageRequest request) {
+    public ChatMessageResponse joinRoom(ChatMessageRequest request, String senderId) {
         ChatRoom room = chatRoomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
 
-        Member member = memberRepository.findById(request.getSenderId())
+        Member member = memberRepository.findById(senderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
         if (member.getRole() == Member.Role.ADMIN) {
@@ -109,7 +116,7 @@ public class ChatService {
 
         ChatMessage message = new ChatMessage();
         message.setRoomId(request.getRoomId());
-        message.setSenderId(request.getSenderId());
+        message.setSenderId(senderId);
         message.setContent(member.getRole() == Member.Role.ADMIN ? "상담사가 입장했습니다." : "고객이 입장했습니다.");
         message.setType(ChatMessage.MessageType.SYSTEM);
         message.setPlatform(ChatMessage.Platform.WEB);

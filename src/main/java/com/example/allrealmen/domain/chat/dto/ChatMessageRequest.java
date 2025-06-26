@@ -13,9 +13,6 @@ public class ChatMessageRequest {
     @NotBlank(message = "채팅방 ID는 필수입니다.")
     private String roomId;
     
-    @NotBlank(message = "발신자 ID는 필수입니다.")
-    private String senderId;
-    
     @NotBlank(message = "메시지 내용은 필수 입력값입니다.")
     private String content;
     
