@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,6 +45,7 @@ public class PostService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .writerId(SecurityUtil.getCurrentUserId())
+                .createdAt(LocalDateTime.now())
                 .build();
         
         if (images != null && !images.isEmpty()) {

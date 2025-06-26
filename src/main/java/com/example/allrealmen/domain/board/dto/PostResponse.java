@@ -32,7 +32,7 @@ public class PostResponse {
                 .collect(Collectors.toList()) : null);
         response.setWatch(post.getWatch());
         response.setComment(post.getComment());
-        response.setCreateAt(post.getCreateAt());
+        response.setCreateAt(post.getCreatedAt());
         return response;
     }
     

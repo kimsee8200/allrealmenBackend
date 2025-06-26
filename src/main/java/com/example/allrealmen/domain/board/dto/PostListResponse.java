@@ -26,7 +26,7 @@ public class PostListResponse {
                 .writer(post.getWriterId())
                 .watch(post.getWatch())
                 .comment(post.getComment())
-                .createAt(post.getCreateAt())
+                .createAt(post.getCreatedAt())
                 .build();
     }
 } 
