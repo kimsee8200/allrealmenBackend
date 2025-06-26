@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/application")
@@ -34,7 +37,11 @@ public class ApplicationController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ApplicationResponse>> createApplication(
             @Valid @RequestPart("data") CreateApplicationRequest request,
-            @ModelAttribute ApplicationFileRequest fileRequest) {
+            @RequestPart("acConditionPhotos")List<MultipartFile> images,
+            @RequestPart("acStickerPhoto")MultipartFile videos
+    )
+    {
+        ApplicationFileRequest fileRequest = new ApplicationFileRequest(images,videos);
         return ResponseEntity.ok(ApiResponse.success(
             applicationService.createApplication(request, fileRequest)));
     }
