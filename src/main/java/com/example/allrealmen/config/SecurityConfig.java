@@ -128,9 +128,11 @@ public class SecurityConfig {
 
                 // 게시판 관련
                 .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
+                    .requestMatchers( "/api/posts/**").authenticated()
 
-                // 사전신청 관련
-                .requestMatchers(HttpMethod.POST, "/api/application").permitAll()
+
+                    // 사전신청 관련
+                .requestMatchers(HttpMethod.POST, "/api/application").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/application/my").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/application/**").hasRole("ADMIN")
 
