@@ -138,7 +138,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/chat/rooms").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/chat/rooms/**").hasAnyRole("ADMIN", "USER")
                 .requestMatchers("/api/chat/consultation").hasAnyRole("ADMIN", "USER")
-                .requestMatchers("/ws-chat/**").permitAll()
+                .requestMatchers("/ws/**").permitAll()
+                .requestMatchers("/topic/**").permitAll()
+                .requestMatchers("/app/**").permitAll()
 
                 // 관리자 전용 API
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

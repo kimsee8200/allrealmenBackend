@@ -33,6 +33,9 @@ dependencies {
 	
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.security:spring-security-messaging:6.5.0'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
 	implementation 'org.webjars:sockjs-client:1.5.1'
 	implementation 'org.webjars:stomp-websocket:2.3.4'
 

@@ -35,6 +35,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
+import com.example.allrealmen.domain.user.entity.Member;
+import com.example.allrealmen.domain.user.repository.MemberRepository;
+import com.example.allrealmen.domain.user.security.CustomUserDetails;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.junit.jupiter.api.AfterEach;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 class ApplicationControllerTest {
@@ -54,6 +62,9 @@ class ApplicationControllerTest {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     private ApplicationResponse applicationResponse;
     private ApplicationListResponse applicationListResponse;
     private CreateApplicationRequest createApplicationRequest;
@@ -62,9 +73,39 @@ class ApplicationControllerTest {
     private MockMultipartFile acStickerPhoto;
     private MockMultipartFile requestFile;
     private Application application;
+    private Member testUser;
+    private String userToken;
+
+    @AfterEach
+    void tearDown() {
+        SecurityContextHolder.clearContext();
+    }
+
+    private void setUpMockAuthentication() {
+        CustomUserDetails userDetails = new CustomUserDetails(testUser);
+        UsernamePasswordAuthenticationToken authentication = 
+            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
     @BeforeEach
     void setUp() throws Exception {
+        // 기존 데이터 정리
+        memberRepository.deleteAll();
+
+        // 테스트 사용자 생성
+        testUser = new Member();
+        testUser.setId("testuser");
+        testUser.setPhoneNumber("010-1234-5678");
+        testUser.setRole(Member.Role.USER);
+        testUser.setPassword("password");
+        memberRepository.save(testUser);
+
+        // 사용자 토큰 생성
+        CustomUserDetails userDetails = new CustomUserDetails(testUser);
+        Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        userToken = jwtTokenProvider.createToken(auth);
+
         application = new Application();
         application.setId("1");
         application.setName("Test User");
@@ -172,5 +213,42 @@ class ApplicationControllerTest {
         // when & then
         mockMvc.perform(get("/api/application/1"))
             .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("사용자 본인 신청 목록 조회 성공")
+    void getMyApplicationsSuccess() throws Exception {
+        // given
+        setUpMockAuthentication();
+        createApplicationSuccess(); // 먼저 신청서 생성
+
+        // when & then
+        mockMvc.perform(get("/api/application/my")
+                .header("Authorization", "Bearer " + userToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data").isArray());
+    }
+
+    @Test
+    @DisplayName("사용자 본인 신청서 상세 조회 성공")
+    void getMyApplicationSuccess() throws Exception {
+        // given
+        setUpMockAuthentication();
+        createApplicationSuccess(); // 먼저 신청서 생성
+
+        // when & then
+        mockMvc.perform(get("/api/application/my/1")
+                .header("Authorization", "Bearer " + userToken))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.success").value(true))
+            .andExpect(jsonPath("$.data").exists());
+    }
+
+    @Test
+    @DisplayName("인증되지 않은 사용자의 신청 목록 조회 실패")
+    void getMyApplicationsFailureUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/application/my"))
+            .andExpect(status().isUnauthorized());
     }
 } 
