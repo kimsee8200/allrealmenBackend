@@ -8,12 +8,12 @@ naver-cloud:
 spring:
   data:
     mongodb:
-      host: mongodb
+      host: localhost
       port: 27017
       database: allrealmen
-      username: ${MONGO_INITDB_ROOT_USERNAME}
-      password: ${MONGO_INITDB_ROOT_PASSWORD}
-      authentication-database: admin
+#      username: ${MONGO_INITDB_ROOT_USERNAME}
+#      password: ${MONGO_INITDB_ROOT_PASSWORD}
+      auto-index-creation: true
   servlet:
     multipart:
       max-file-size: 10MB
@@ -70,7 +70,9 @@ spring:
 
 logging:
   level:
+    org.springframework.security: DEBUG
     org.springframework.data.mongodb: DEBUG
+    com.example.allrealmen: DEBUG
 
 server:
   port: 8080
