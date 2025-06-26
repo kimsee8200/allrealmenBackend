@@ -88,8 +88,8 @@ public class ChatController {
     }
 
     @PostMapping("/consultation")
-    public ResponseEntity<ApiResponse<ChatRoomResponse>> createConsultationRoom(
-            @RequestParam String customerId) {
+    public ResponseEntity<ApiResponse<ChatRoomResponse>> createConsultationRoom() {
+        String customerId = SecurityUtil.getCurrentUserId();
         ChatRoomResponse room = chatService.createConsultationRoom(customerId);
         return ResponseEntity.ok(new ApiResponse<>("200 OK", room, "상담방이 생성되었습니다."));
     }

@@ -2,6 +2,7 @@ package com.example.allrealmen.domain.board.entity;
 
 import com.example.allrealmen.domain.board.dto.CreatePostRequest;
 import com.example.allrealmen.domain.user.entity.Member;
+import jdk.jfr.Timestamp;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +41,7 @@ public class Post {
     
     private int comment = 0;
     
-    @CreatedDate
+    @Timestamp
     private LocalDateTime createAt;
     
     public void addImage(PostImage image) {
