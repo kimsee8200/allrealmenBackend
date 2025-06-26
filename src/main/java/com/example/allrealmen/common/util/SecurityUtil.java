@@ -1,5 +1,6 @@
 package com.example.allrealmen.common.util;
 
+import com.example.allrealmen.domain.user.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -43,13 +44,17 @@ public class SecurityUtil {
      * @return 현재 인증된 사용자의 ID (Optional)
      */
     public static String getCurrentUserId() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("No authentication found");
+            throw new IllegalStateException("인증 정보가 없습니다.");
         }
-
-        return authentication.getName();
+        
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getId();
+        }
+        
+        throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
     }
 
     /**
@@ -95,5 +100,19 @@ public class SecurityUtil {
 
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         return Optional.ofNullable(oauth2User.getAttribute(attributeName));
+    }
+
+    public static String getCurrentUserPhoneNumber() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new IllegalStateException("인증 정보가 없습니다.");
+        }
+        
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getPhoneNumber();
+        }
+        
+        throw new IllegalStateException("인증 정보가 올바르지 않습니다.");
     }
 }

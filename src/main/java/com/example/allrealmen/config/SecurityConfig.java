@@ -131,7 +131,14 @@ public class SecurityConfig {
 
                 // 사전신청 관련
                 .requestMatchers(HttpMethod.POST, "/api/application").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/application/my").authenticated()
                 .requestMatchers(HttpMethod.GET, "/api/application/**").hasRole("ADMIN")
+
+                // 채팅 관련
+                .requestMatchers("/api/chat/rooms").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/chat/rooms/**").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/api/chat/consultation").hasAnyRole("ADMIN", "USER")
+                .requestMatchers("/ws-chat/**").permitAll()
 
                 // 관리자 전용 API
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
@@ -155,14 +162,17 @@ public class SecurityConfig {
             // OAuth2 설정 추가
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/api/auth/oauth")
+                    .baseUri("/api/auth/oauth2/authorize")
                     .authorizationRequestRepository(authorizationRequestRepository())
+                )
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/api/auth/oauth2/callback/*")
                 )
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(new OAuthAuthenticationSuccessHandler(objectMapper, jwtTokenProvider, memberRepository))
-                .failureHandler(new OAuthAuthenticationFailureHandler(objectMapper))
+                .successHandler(new JsonAuthenticationSuccessHandler(objectMapper, jwtTokenProvider, memberRepository))
+                .failureHandler(new JsonAuthenticationFailureHandler(objectMapper))
             );
         
         return http.build();

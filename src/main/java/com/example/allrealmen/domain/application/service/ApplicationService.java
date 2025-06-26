@@ -133,4 +133,19 @@ public class ApplicationService {
         
         application.setMovingCleaningDetails(details);
     }
+
+    public Page<ApplicationListResponse> getMyApplications(Pageable pageable) {
+        String currentUserId = SecurityUtil.getCurrentUserId();
+        return applicationRepository.findAllByPhoneNumOrderByApplicationTimeDesc(
+            SecurityUtil.getCurrentUserPhoneNumber(), 
+            pageable
+        ).map(ApplicationListResponse::from);
+    }
+
+    public ApplicationResponse getMyApplication(String id) {
+        String currentUserPhoneNumber = SecurityUtil.getCurrentUserPhoneNumber();
+        Application application = applicationRepository.findByIdAndPhoneNum(id, currentUserPhoneNumber)
+            .orElseThrow(() -> new IllegalArgumentException("해당 신청서를 찾을 수 없습니다."));
+        return ApplicationResponse.from(application);
+    }
 } 

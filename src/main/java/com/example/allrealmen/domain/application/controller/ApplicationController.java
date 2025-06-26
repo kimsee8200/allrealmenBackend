@@ -10,6 +10,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,5 +46,16 @@ public class ApplicationController {
         ApplicationFileRequest fileRequest = new ApplicationFileRequest(images,videos);
         return ResponseEntity.ok(ApiResponse.success(
             applicationService.createApplication(request, fileRequest)));
+    }
+
+    @GetMapping("/my")
+    public ApiResponse<Page<ApplicationListResponse>> getMyApplications(
+            @PageableDefault(size = 10, sort = "applicationTime", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ApiResponse.success(applicationService.getMyApplications(pageable));
+    }
+
+    @GetMapping("/my/{id}")
+    public ApiResponse<ApplicationResponse> getMyApplication(@PathVariable String id) {
+        return ApiResponse.success(applicationService.getMyApplication(id));
     }
 } 
