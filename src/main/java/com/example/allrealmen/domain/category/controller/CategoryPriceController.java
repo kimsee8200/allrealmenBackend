@@ -34,6 +34,16 @@ public class CategoryPriceController {
         return ResponseEntity.ok(ApiResponse.success(
             categoryPriceService.createCategoryPrice(categoryId, request)));
     }
+
+    @PutMapping("/{priceId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CategoryPrice>> updateCategoryPrice(
+            @PathVariable String categoryId,
+            @PathVariable String priceId,
+            @Valid @RequestBody CategoryPriceRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(
+            categoryPriceService.updateCategoryPrice(categoryId, priceId, request)));
+    }
     
     @DeleteMapping("/{priceId}")
     @PreAuthorize("hasRole('ADMIN')")

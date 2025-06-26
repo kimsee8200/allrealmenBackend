@@ -60,6 +60,28 @@ public class CategoryPriceService {
         categoryPriceRepository.deleteByCategoryId(categoryId);
     }
     
+    @Transactional
+    public CategoryPrice updateCategoryPrice(String categoryId, String priceId, CategoryPriceRequest request) {
+        // 가격 정보 조회
+        CategoryPrice categoryPrice = categoryPriceRepository.findById(priceId)
+                .orElseThrow(() -> new IllegalArgumentException("가격 정보를 찾을 수 없습니다."));
+        
+        // 카테고리 ID 검증
+        if (!categoryPrice.getCategory().getId().equals(categoryId)) {
+            throw new IllegalArgumentException("해당 카테고리의 가격 정보가 아닙니다.");
+        }
+        
+        // 요청 데이터 검증
+        validatePriceRequest(request);
+        
+        // 가격 정보 업데이트
+        categoryPrice.updateAreaRange(request.getMinArea(), request.getMaxArea());
+        categoryPrice.updateDuration(request.getDuration());
+        categoryPrice.updatePrice(request.getPrice());
+        
+        return categoryPriceRepository.save(categoryPrice);
+    }
+    
     private void validatePriceRequest(CategoryPriceRequest request) {
         if (request.getMinArea() > request.getMaxArea()) {
             throw new IllegalArgumentException("최소 평수가 최대 평수보다 클 수 없습니다.");

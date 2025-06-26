@@ -49,11 +49,9 @@ public class Post {
         this.images.add(image);
     }
 
-    public void addImages(List<PostImage> image) {
-        if (this.images == null) {
-            this.images = image;
-        }
-        image.forEach(singleImage -> this.addImage(singleImage));
+    public void addImages(List<PostImage> images) {
+        this.images = new ArrayList<>();
+        this.images.addAll(images);
     }
     
     public void addReply(Reply reply) {
