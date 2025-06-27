@@ -44,10 +44,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<CategoryResponse>> updateCategory(
             @PathVariable String id,
             @Valid @RequestPart("data") UpdateCategoryRequest request,
-            @RequestPart(value = "image", required = false) List<MultipartFile> images,
-            @RequestPart(value = "video", required = false) List<MultipartFile> videos) {
+            @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         return ResponseEntity.ok(ApiResponse.success(
-            categoryService.updateCategory(id, request, images, videos)));
+            categoryService.updateCategory(id, request, images)));
     }
     
     @PostMapping("/initialize")

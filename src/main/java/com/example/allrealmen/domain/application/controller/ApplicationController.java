@@ -39,11 +39,10 @@ public class ApplicationController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<ApplicationResponse>> createApplication(
             @Valid @RequestPart("data") CreateApplicationRequest request,
-            @RequestPart("acConditionPhotos")List<MultipartFile> images,
-            @RequestPart("acStickerPhoto")MultipartFile videos
+            @RequestPart("cleaningAreas")List<MultipartFile> images
     )
     {
-        ApplicationFileRequest fileRequest = new ApplicationFileRequest(images,videos);
+        ApplicationFileRequest fileRequest = new ApplicationFileRequest(images);
         return ResponseEntity.ok(ApiResponse.success(
             applicationService.createApplication(request, fileRequest)));
     }

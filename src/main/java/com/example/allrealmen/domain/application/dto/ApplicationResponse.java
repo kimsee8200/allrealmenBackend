@@ -4,6 +4,7 @@ import com.example.allrealmen.domain.application.entity.Application;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter @Setter
 @NoArgsConstructor
@@ -15,17 +16,10 @@ public class ApplicationResponse {
     private String address;
     private String phoneNum;
     private Application.ServiceType serviceType;
-    
-    // 에어컨 청소 관련 필드
-    private AcCleaningDetailsResponse acCleaningDetails;
-    
-    // 입주청소 관련 필드
-    private MovingCleaningDetailsResponse movingCleaningDetails;
-    
-    // 공통 필드
-    private Integer deposit;
-    private String depositAccount;
+    private LocalDateTime wantedCleaningTime;
+    private Integer squareMeters;
     private LocalDateTime applicationTime;
+    private List<String> images;
     
     public static ApplicationResponse from(Application application) {
         ApplicationResponse response = new ApplicationResponse();
@@ -34,18 +28,10 @@ public class ApplicationResponse {
         response.setAddress(application.getAddress());
         response.setPhoneNum(application.getPhoneNum());
         response.setServiceType(application.getServiceType());
-        
-        if (application.getAcCleaningDetails() != null) {
-            response.setAcCleaningDetails(AcCleaningDetailsResponse.from(application.getAcCleaningDetails()));
-        }
-        
-        if (application.getMovingCleaningDetails() != null) {
-            response.setMovingCleaningDetails(MovingCleaningDetailsResponse.from(application.getMovingCleaningDetails()));
-        }
-        
-        response.setDeposit(application.getDeposit());
-        response.setDepositAccount(application.getDepositAccount());
         response.setApplicationTime(application.getApplicationTime());
+        response.setWantedCleaningTime(application.getWantedCleaningTime());
+        response.setSquareMeters(application.getSquareMeters());
+        response.setImages(application.getImages());
         return response;
     }
     

@@ -1,5 +1,7 @@
 package com.example.allrealmen.domain.application.entity;
 
+import com.example.allrealmen.domain.application.dto.ApplicationFileRequest;
+import com.example.allrealmen.domain.application.dto.CreateApplicationRequest;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -10,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "applications")
 @Getter @Setter
@@ -20,24 +23,30 @@ public class Application {
     
     @Id
     private String id;
-    
     private String name;
     private String address;
     private String phoneNum;
+    private LocalDateTime wantedCleaningTime;
     private ServiceType serviceType;
-    
-    // 에어컨 청소 관련 필드
-    private AcCleaningDetails acCleaningDetails;
-    
-    // 입주청소 관련 필드
-    private MovingCleaningDetails movingCleaningDetails;
-    
-    // 공통 필드
-    private Integer deposit = 100000;   // 예약금 (기본 10만원)
-    private String depositAccount;      // 입금자명
-    
+    private Integer squareMeters;
+    private Boolean premiumCleaning;
+
+    private List<String> images;
+
     @CreatedDate
     private LocalDateTime applicationTime;
+
+    public static Application from(CreateApplicationRequest createRequest) {
+        return Application.builder()
+                .name(createRequest.getName())
+                .address(createRequest.getAddress())
+                .phoneNum(createRequest.getPhoneNum())
+                .serviceType(createRequest.getServiceType())
+                .wantedCleaningTime(createRequest.getWantedCleaningTime())
+                .premiumCleaning(createRequest.getPremiumCleaning())
+                .squareMeters(createRequest.getSquareMeters())
+                .build();
+    }
     
     public enum ServiceType {
         MOVING_IN_CLEANING("입주/이사청소"),

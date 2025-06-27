@@ -20,7 +20,6 @@ public class CategoryResponse {
     private String category;
     private String description;
     private List<FileInfo> images;
-    private List<FileInfo> videos;
 
     @Getter @Setter
     public static class FileInfo {
@@ -45,16 +44,7 @@ public class CategoryResponse {
                 .collect(Collectors.toList()));
         }
         
-        if (category.getVideos() != null) {
-            response.setVideos(category.getVideos().stream()
-                .map(vid -> {
-                    FileInfo info = new FileInfo();
-                    info.setId(vid.getId());
-                    info.setUrl(vid.getUrl());
-                    return info;
-                })
-                .collect(Collectors.toList()));
-        }
+
         
         return response;
     }

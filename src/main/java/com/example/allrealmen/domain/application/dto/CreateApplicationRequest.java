@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter @Setter
@@ -24,17 +26,12 @@ public class CreateApplicationRequest {
     
     @NotNull(message = "서비스 유형은 필수 입력값입니다.")
     private Application.ServiceType serviceType;
+
+    @DateTimeFormat(fallbackPatterns = "yyyy-MM-dd HH:mm")
+    private LocalDateTime wantedCleaningTime;
     
     // 에어컨 청소 관련 필드
-    private List<MultipartFile> acConditionPhotos;  // 에어컨 정면, 주변 사진
-    private MultipartFile acStickerPhoto;     // 제조 스티커 사진
-    private String acCondition;        // 에어컨 상태 및 수량
-    private Boolean outdoorUnitCleaning; // 실외기 청소 유무
-    
-    // 입주청소 관련 필드
     private Integer squareMeters;      // 평수
+
     private Boolean premiumCleaning;   // 프리미엄 특수청소 여부
-    
-    // 공통 필드
-    private String depositAccount;      // 입금자명
-} 
+}

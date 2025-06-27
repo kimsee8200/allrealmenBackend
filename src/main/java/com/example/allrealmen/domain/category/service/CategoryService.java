@@ -45,8 +45,8 @@ public class CategoryService {
     
     @Transactional
     public CategoryResponse updateCategory(String id, UpdateCategoryRequest request,
-                                        List<MultipartFile> images,
-                                        List<MultipartFile> videos) {
+                                        List<MultipartFile> images
+                                    ) {
         Category category = categoryRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
             
@@ -63,19 +63,7 @@ public class CategoryService {
             }
             category.setImages(imageInfos);
         }
-        
-        // 비디오 처리
-        if (videos != null && !videos.isEmpty()) {
-            List<Category.FileInfo> videoInfos = new ArrayList<>();
-            for (MultipartFile video : videos) {
-                String fileUrl = fileService.saveFile(video, CATEGORY_FILE_DIR);
-                Category.FileInfo fileInfo = new Category.FileInfo();
-                fileInfo.setUrl(fileUrl);
-                videoInfos.add(fileInfo);
-            }
-            category.setVideos(videoInfos);
-        }
-        
+
         return CategoryResponse.from(categoryRepository.save(category));
     }
     

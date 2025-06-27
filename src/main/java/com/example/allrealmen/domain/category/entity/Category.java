@@ -21,7 +21,6 @@ public class Category {
     private String category;        // 카테고리 이름
     private String description;     // 카테고리 설명
     private List<FileInfo> images; // 이미지 파일 정보
-    private List<FileInfo> videos; // 비디오 파일 정보
 
     @Getter @Setter
     @NoArgsConstructor
