@@ -12,5 +12,6 @@ RUN ./gradlew clean bootJar -x test
 
 FROM eclipse-temurin:17-jre-alpine
 VOLUME /tmp
+RUN mkdir -p /uploads && chmod 777 /uploads
 COPY --from=build /workspace/app/build/libs/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"] 
+ENTRYPOINT ["java","-jar","app.jar"] 

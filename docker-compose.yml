@@ -9,6 +9,8 @@ services:
       - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+    volumes:
+      - file_storage:/uploads
     depends_on:
       - mongodb
     networks:
@@ -42,6 +44,8 @@ services:
 volumes:
   mongodb_data:
     name: mongodb_data
+  file_storage:
+    name: file_storage
 
 networks:
   allReal_network:
