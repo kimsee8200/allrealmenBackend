@@ -81,7 +81,7 @@ public class ChatController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/rooms/{roomId}/close")
+    @DeleteMapping("/rooms/{roomId}/close")
     public ResponseEntity<ApiResponse<Void>> closeRoom(@PathVariable String roomId) {
         chatService.closeRoom(roomId);
         return ResponseEntity.ok(new ApiResponse<>("200 OK", null, "채팅방이 종료되었습니다."));
