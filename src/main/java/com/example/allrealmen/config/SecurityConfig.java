@@ -123,13 +123,12 @@ public class SecurityConfig {
 
                 // 카테고리 관련
                 .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.PUT, "/api/categories/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/categories/initialize").hasRole("ADMIN")
 
                 // 게시판 관련
-                .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                     .requestMatchers( "/api/posts/**").authenticated()
-
+                    .requestMatchers("/files/**").permitAll()
 
                     // 사전신청 관련
                 .requestMatchers(HttpMethod.POST, "/api/application").authenticated()
