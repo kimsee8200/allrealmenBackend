@@ -10,6 +10,8 @@ import com.example.allrealmen.domain.chat.repository.ChatRoomRepository;
 import com.example.allrealmen.domain.user.entity.Member;
 import com.example.allrealmen.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -191,6 +194,29 @@ public class ChatService {
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 관리자입니다."));
             
             kakaoNotificationService.sendChatNotification(admin, message);
+        }
+    }
+
+    /**
+     * 1시간 전에 종료된 채팅방을 삭제하는 스케줄링된 작업
+     * 매 10분마다 실행
+     */
+    @Scheduled(fixedRate = 600000) // 10분(600,000ms)마다 실행
+    @Transactional
+    public void deleteClosedChatRooms() {
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        
+        List<ChatRoom> closedRooms = chatRoomRepository.findByStatusAndClosedAtBefore(
+            ChatRoom.ChatStatus.CLOSED, 
+            oneHourAgo
+        );
+        
+        for (ChatRoom room : closedRooms) {
+            log.info("Deleting chat room {} and its messages. Closed at: {}", room.getId(), room.getClosedAt());
+            // 채팅방의 모든 메시지 삭제
+            chatMessageRepository.deleteByRoomId(room.getId());
+            // 채팅방 삭제
+            chatRoomRepository.delete(room);
         }
     }
 } 

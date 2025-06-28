@@ -8,4 +8,5 @@ import java.util.List;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
     List<ChatMessage> findByRoomIdOrderBySentAtAsc(String roomId);
     int countByRoomIdAndIsReadFalse(String roomId);
+    void deleteByRoomId(String roomId);
 } 
