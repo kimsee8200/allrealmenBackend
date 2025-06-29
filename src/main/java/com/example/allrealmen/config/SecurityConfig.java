@@ -88,7 +88,8 @@ public class SecurityConfig {
             "http://jeenie2027.cafe24app.com", 
             "https://allrealmen.netlify.app/",
             "http://localhost:3000",
-            "http://localhost:5173"
+            "http://localhost:5173",
+                "https://www.xn--q20b38omkn.com"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));

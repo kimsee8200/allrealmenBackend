@@ -1,8 +1,19 @@
 version: '3.8'
 
 services:
+
+  webApp:
+    image: seprogramd/allcleanmen:latest
+    container_name: allrealwebserver
+    user: root
+    ports:
+        - "81:81"
+    networks:
+      - allReal_network
+
   app:
     image: kimsee/allrealmen:latest
+    container_name: allrealdataserver
     ports:
       - "8080:8080"
     env_file:
