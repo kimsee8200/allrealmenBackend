@@ -89,8 +89,10 @@ public class SecurityConfig {
             "https://allrealmen.netlify.app/",
             "http://localhost:3000",
             "http://localhost:5173",
-                "https://www.xn--q20b38omkn.com",
-                "http://allrealwebserver:81"
+                "https://www.xn--q20b38omkn.com/*",
+                "http://allrealwebserver:81",
+                "43.201.168.53"
+
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
