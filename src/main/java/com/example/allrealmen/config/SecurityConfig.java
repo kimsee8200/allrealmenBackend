@@ -5,10 +5,7 @@ import com.example.allrealmen.domain.user.dto.LoginRequest;
 import com.example.allrealmen.domain.user.dto.TokenResponse;
 import com.example.allrealmen.domain.user.entity.Member;
 import com.example.allrealmen.domain.user.repository.MemberRepository;
-import com.example.allrealmen.domain.user.security.CustomOAuth2UserService;
-import com.example.allrealmen.domain.user.security.CustomUserDetails;
-import com.example.allrealmen.domain.user.security.JwtAuthenticationFilter;
-import com.example.allrealmen.domain.user.security.JwtTokenProvider;
+import com.example.allrealmen.domain.user.security.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -177,8 +174,8 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(customOAuth2UserService)
                 )
-                .successHandler(new JsonAuthenticationSuccessHandler(objectMapper, jwtTokenProvider, memberRepository))
-                .failureHandler(new JsonAuthenticationFailureHandler(objectMapper))
+                .successHandler(new OAuthAuthenticationSuccessHandler(objectMapper, jwtTokenProvider, memberRepository))
+                .failureHandler(new OAuthAuthenticationFailureHandler(objectMapper))
             );
         
         return http.build();
@@ -295,8 +292,8 @@ class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                       Authentication authentication) throws IOException, ServletException {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Member member = memberRepository.findById(userDetails.getId())
+        CustomOAuth2User userDetails = (CustomOAuth2User) authentication.getPrincipal();
+        Member member = memberRepository.findById(userDetails.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
         
         Authentication newAuth = new UsernamePasswordAuthenticationToken(
@@ -310,6 +307,7 @@ class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
+        response.sendRedirect("/");
 
         log.info("OAuth 로그인 성공: principal={}", authentication.getPrincipal());
 
