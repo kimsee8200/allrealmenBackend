@@ -30,7 +30,7 @@ spring:
             scope:
               - name
               - email
-            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/login/oauth2/code/naver
+            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/api/auth/oauth2/callback/naver
             provider: naver-provider
           google:
             client-id: ${GOOGLE_CLIENT_ID}
@@ -40,7 +40,7 @@ spring:
             scope:
               - profile
               - email
-            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/login/oauth2/code/google
+            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/api/auth/oauth2/callback/google
             provider: google
 
           kakao:
@@ -52,7 +52,7 @@ spring:
             scope:
               - profile_nickname
               - account_email
-            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/login/oauth2/code/kakao
+            redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/api/auth/oauth2/callback/kakao
             provider: kakao-provider
 
         provider:
