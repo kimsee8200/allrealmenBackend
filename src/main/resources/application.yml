@@ -51,7 +51,6 @@ spring:
             client-authentication-method: client_secret_post
             scope:
               - profile_nickname
-              - account_email
             redirect-uri: ${OAUTH_REDIRECT_BASE_URL}/api/auth/oauth2/callback/kakao
             provider: kakao-provider
 
