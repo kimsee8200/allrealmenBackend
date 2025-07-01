@@ -26,7 +26,7 @@ public class PasswordController {
         }
     }
 
-    @PostMapping("/reset-pass")
+    @PutMapping("/reset-pass")
     public ResponseEntity<ApiResponse<Void>> resetPassword(
             @Valid @RequestBody ResetPasswordRequest request) {
         try {
