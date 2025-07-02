@@ -306,7 +306,6 @@ class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler 
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        response.sendRedirect("/");
 
         log.info("OAuth 로그인 성공: principal={}", authentication.getPrincipal());
 
