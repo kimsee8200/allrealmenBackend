@@ -146,7 +146,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 
                 // 나머지 요청
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
             )
             // JWT 필터 추가 (Form 로그인 필터 이전에 추가)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
