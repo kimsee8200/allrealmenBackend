@@ -332,6 +332,6 @@ class OAuthAuthenticationFailureHandler implements AuthenticationFailureHandler 
         
         log.error("OAuth 인증 실패: {} - {}", exception.getClass().getName(), exception.getMessage(), exception);
 
-        objectMapper.writeValue(response.getWriter(), ApiResponse.error("OAuth 로그인에 실패했습니다: " + exception.getMessage()));
+        objectMapper.writeValue(response.getWriter(), ApiResponse.error("OAuth 로그인에 실패했습니다: " + exception));
     }
 } 
