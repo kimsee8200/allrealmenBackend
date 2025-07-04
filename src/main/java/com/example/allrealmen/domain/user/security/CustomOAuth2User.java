@@ -12,10 +12,12 @@ import java.util.Map;
 public class CustomOAuth2User implements OAuth2User {
     private final Member member;
     private final Map<String, Object> attributes;
+    private final String provider;
 
-    public CustomOAuth2User(Member member, Map<String, Object> attributes) {
+    public CustomOAuth2User(Member member, Map<String, Object> attributes, String provider) {
         this.member = member;
         this.attributes = attributes;
+        this.provider = provider;
     }
 
     @Override
@@ -35,5 +37,9 @@ public class CustomOAuth2User implements OAuth2User {
 
     public Member getMember() {
         return member;
+    }
+
+    public String getProvider() {
+        return provider;
     }
 } 

@@ -28,12 +28,8 @@ public class CategoryController {
         return ResponseEntity.ok(ApiResponse.success(categories));
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getCategoriesDetail() {
-        List<CategoryResponse> categories = categoryService.getCategoriesDetail();
-        return ResponseEntity.ok(ApiResponse.success(categories));
-    }
-
+    
+    
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<CategoryResponse>> getCategory(@PathVariable String id) {
         return ResponseEntity.ok(ApiResponse.success(categoryService.getCategory(id)));

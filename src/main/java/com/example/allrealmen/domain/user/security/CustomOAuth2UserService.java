@@ -33,7 +33,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = memberRepository.findById(userInfo.getId())
                 .orElseGet(() -> createNewMember(userInfo));
 
-        return new CustomOAuth2User(member, attributes);
+        return new CustomOAuth2User(member, attributes, userInfo.getProvider());
     }
 
     private OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {
@@ -51,10 +51,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = new Member();
         member.setId(userInfo.getName()); // 임시 ID 생성
         
-        // 네이버 사용자인 경우 전화번호 저장
+        // 네이버 사용자인 경우에만 전화번호 저장
         if (userInfo instanceof NaverOAuth2UserInfo) {
             NaverOAuth2UserInfo naverUserInfo = (NaverOAuth2UserInfo) userInfo;
             member.setPhoneNumber(naverUserInfo.getMobile());
+        } else {
+            // 다른 OAuth 제공자의 경우 전화번호를 저장하지 않음
+            member.setPhoneNumber(null);
         }
         
         //member.setPassword(passwordEncoder.encode(UUID.randomUUID().toString())); // 임시 비밀번호

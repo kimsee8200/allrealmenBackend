@@ -308,7 +308,8 @@ class OAuthAuthenticationSuccessHandler implements AuthenticationSuccessHandler 
         response.setCharacterEncoding("UTF-8");
 
         log.info("OAuth 로그인 성공: principal={}", authentication.getPrincipal());
-
+        String url = "/oauth/"+userDetails.getProvider()+"/callback?token="+token;
+        response.encodeRedirectURL(url);
         objectMapper.writeValue(response.getWriter(), 
             ApiResponse.success(new TokenResponse(token)));
     }
